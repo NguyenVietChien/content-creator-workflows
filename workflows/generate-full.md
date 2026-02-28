@@ -2,7 +2,7 @@
 description: Full pipeline - generate script then auto-convert to JSON (image prompts + voice_over)
 ---
 
-# /generate-full — Pipeline Hoàn Chỉnh: Script → JSON
+# /generate-full — Pipeline Hoàn Chỉnh: Script → JSON → Extract
 
 ## Khi nào dùng?
 User muốn tạo kịch bản VÀ JSON trong một lần gọi. Ví dụ:
@@ -29,15 +29,30 @@ Chạy **toàn bộ** workflow `/generate-json` trên file `.md` vừa tạo:
 4. Tạo JSON với image prompts
 5. Ghi vào file `.json` cùng tên
 
+### Phase 3: Trích Xuất (Auto-Extract)
+// turbo
+Chạy script `extract.py` trên file `.json` vừa tạo:
+```
+python apps/json_extractor/extract.py apps/script_generator/outputs/[filename].json
+```
+Script sẽ tự động tạo 2 file cạnh file JSON gốc:
+- `[filename]_voice_over.txt` — mỗi dòng = 1 segment voice_over
+- `[filename]_prompts.csv` — id, prompt, sample_image
+
+**KHÔNG dừng lại chờ review. Thông báo kết quả cuối cùng.**
+
 ### Thông báo cuối cùng:
 ```
 ✅ Pipeline hoàn tất!
 📝 Script: apps/script_generator/outputs/[filename].md (~X words)
 🖼️ JSON: apps/script_generator/outputs/[filename].json (N segments)
-Mở 2 file để review nhé!
+📝 Voice Over: apps/script_generator/outputs/[filename]_voice_over.txt
+📋 Prompts: apps/script_generator/outputs/[filename]_prompts.csv
+Mở files để review nhé!
 ```
 
 ## Lưu ý
 - Nếu user chỉ muốn 1 trong 2 bước → dùng `/generate-script` hoặc `/generate-json` riêng lẻ
-- Pipeline KHÔNG dừng giữa chừng để chờ review — chạy hết cả 2 phase rồi mới thông báo
-- Feedback loop: User review cả 2 file, sửa file nào thì dùng replace_file_content trực tiếp
+- Chỉ muốn extract → chạy trực tiếp: `python apps/json_extractor/extract.py <path.json>`
+- Pipeline KHÔNG dừng giữa chừng để chờ review — chạy hết cả 3 phase rồi mới thông báo
+- Feedback loop: User review files, sửa file nào thì dùng replace_file_content trực tiếp
