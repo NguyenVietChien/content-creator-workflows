@@ -2,7 +2,6 @@
 
 Usage:
     python extract.py <path_to_json>
-    python extract.py               (tự tìm file .json mới nhất trong outputs/)
 
 Output: tạo 2 file cạnh file JSON gốc:
     - *_voice_over.txt   (mỗi dòng = 1 segment voice_over)
@@ -14,30 +13,13 @@ import sys
 import os
 import json
 import csv
-import glob
 
 # Fix Windows console encoding
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 
-def find_latest_json():
-    """Tìm file .json mới nhất trong outputs/."""
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    outputs_dir = os.path.join(script_dir, "..", "script_generator", "outputs")
-    outputs_dir = os.path.normpath(outputs_dir)
-
-    if not os.path.isdir(outputs_dir):
-        return None
-
-    json_files = glob.glob(os.path.join(outputs_dir, "*.json"))
-    if not json_files:
-        return None
-
-    return max(json_files, key=os.path.getmtime)
-
-
 def extract(json_path):
-    """Đọc JSON và tạo voice_over.txt + prompts.csv."""
+    """Trích xuất voice_over.txt + prompts.csv từ file JSON."""
     print(f"📂 File: {os.path.basename(json_path)}")
 
     with open(json_path, "r", encoding="utf-8") as f:
@@ -83,14 +65,11 @@ def extract(json_path):
 
 
 def main():
-    if len(sys.argv) > 1:
-        json_path = sys.argv[1]
-    else:
-        json_path = find_latest_json()
-        if not json_path:
-            print("❌ Không tìm thấy file JSON. Dùng: python extract.py <path>")
-            sys.exit(1)
-        print(f"🔍 Tự động chọn file mới nhất:")
+    if len(sys.argv) < 2:
+        print("❌ Thiếu path. Dùng: python extract.py <path_to_json>")
+        sys.exit(1)
+
+    json_path = sys.argv[1]
 
     if not os.path.isfile(json_path):
         print(f"❌ File không tồn tại: {json_path}")
