@@ -33,7 +33,7 @@ Chạy **toàn bộ** workflow `/generate-json` trên file `.md` vừa tạo:
 // turbo
 Chạy script `extract.py` trên file `.json` vừa tạo:
 ```
-python apps/json_extractor/extract.py apps/script_generator/outputs/[filename].json
+python apps/tools/extract.py apps/script_generator/outputs/[filename].json
 ```
 Script sẽ tự động tạo 2 file cạnh file JSON gốc:
 - `[filename]_voice_over.txt` — mỗi dòng = 1 segment voice_over
@@ -53,6 +53,6 @@ Mở files để review nhé!
 
 ## Lưu ý
 - Nếu user chỉ muốn 1 trong 2 bước → dùng `/generate-script` hoặc `/generate-json` riêng lẻ
-- Chỉ muốn extract → chạy trực tiếp: `python apps/json_extractor/extract.py <path.json>`
+- Chỉ muốn extract → chạy trực tiếp: `python apps/tools/extract.py <path.json>`
 - Pipeline KHÔNG dừng giữa chừng để chờ review — chạy hết cả 3 phase rồi mới thông báo
 - Feedback loop: User review files, sửa file nào thì dùng replace_file_content trực tiếp
